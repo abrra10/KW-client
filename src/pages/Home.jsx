@@ -25,7 +25,9 @@ export default function Home() {
   const initializeEventStream = () => {
     const recipeInputs = { ...recipeData };
     const queryParams = new URLSearchParams(recipeInputs).toString();
-    const url = `http://localhost:3001/recipeStream?${queryParams}`;
+    const API_URL =
+      import.meta.env.VITE_API_URL || "https://kw-server-1.onrender.com";
+    const url = `${API_URL}/recipeStream?${queryParams}`;
     eventSourceRef.current = new EventSource(url);
 
     eventSourceRef.current.onopen = () => {
