@@ -1,5 +1,5 @@
 import React from "react";
-import Features from "../components/features";
+import Features from "../components/Features";
 
 const HeroSection = ({ className }) => {
   const ingredients = [
