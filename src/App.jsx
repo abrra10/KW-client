@@ -15,7 +15,7 @@ import Recipes from "./pages/Recipes";
 import Blogs from "./pages/Blogs";
 import { AuthProvider } from "./utils/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
-import { FooterSimple } from "./components/footer";
+import { FooterSimple } from "./components/Footer";
 
 const App = () => {
   return (
