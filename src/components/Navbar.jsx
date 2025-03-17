@@ -12,6 +12,7 @@ const Navbar = () => {
   const { user, profile, setUser, loading, error } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [avatarLoaded, setAvatarLoaded] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -137,8 +138,14 @@ const Navbar = () => {
                     src={profile?.avatar || defaultProfilePic}
                     alt={profile?.name || "User Avatar"}
                     className="w-9 h-9 rounded-full object-cover"
-                    onError={(e) => (e.target.src = defaultProfilePic)}
+                    onLoad={() => setAvatarLoaded(true)}
+                    onError={(e) => {
+                      e.target.src = defaultProfilePic;
+                      setAvatarLoaded(true);
+                    }}
+                    style={{ visibility: avatarLoaded ? "visible" : "hidden" }}
                   />
+
                   <span className="text-ybrown font-semibold capitalize">
                     {profile?.name}
                   </span>

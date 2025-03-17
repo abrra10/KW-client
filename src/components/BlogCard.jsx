@@ -2,30 +2,33 @@ import { useEffect, useState } from "react";
 import supabase from "../utils/supabaseClient";
 
 export default function BlogCard({ blog }) {
-  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState("Unknown User");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchUser() {
-      if (!blog.user_id) return;
+    if (!blog.user_id) return;
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("username, avatar_url")
-        .eq("id", blog.user_id)
-        .single();
+    const fetchUsername = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("username")
+          .eq("id", blog.user_id)
+          .single();
 
-      if (error) {
-        console.error("Error fetching user:", error.message);
-        setError("Failed to load user");
-      } else {
-        setUser(data);
+        if (error) throw error;
+        setUsername(data?.username || "Unknown User");
+      } catch (error) {
+        console.error("Error fetching username:", error.message);
+        setError("Failed to load author");
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    }
+    };
 
-    fetchUser();
+    fetchUsername();
   }, [blog.user_id]);
 
   return (
@@ -46,34 +49,18 @@ export default function BlogCard({ blog }) {
 
       {/* Content */}
       <div className="p-4 flex flex-col justify-between flex-1 min-h-[200px]">
-        {/* Title & Author Info */}
+        {/* Title & Author */}
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold  capitalize w-2/3 truncate font-marko text-orange">
+          <h2 className="text-xl font-semibold capitalize w-2/3 truncate font-marko text-orange">
             {blog.title}
           </h2>
-          <div className="flex items-center gap-2 font-marko">
+          <div className="text-sm text-orange font-semibold capitalize font-marko truncate w-20">
             {loading ? (
-              <span className="text-gray-500 text-sm">Loading author...</span>
+              <span className="text-gray-500 text-sm">Loading...</span>
             ) : error ? (
               <span className="text-red-500 text-sm">{error}</span>
             ) : (
-              <>
-                {user?.avatar_url ? (
-                  <img
-                    src={user.avatar_url}
-                    alt={user.username || "User Avatar"}
-                    className="w-8 h-8 rounded-full object-cover border-2 border-orange"
-                    onError={(e) => (e.target.style.display = "none")}
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-sm text-gray-600">
-                    ?
-                  </div>
-                )}
-                <span className="text-sm text-orange font-semibold capitalize font-marko truncate w-20">
-                  {user?.username || "Unknown User"}
-                </span>
-              </>
+              username
             )}
           </div>
         </div>

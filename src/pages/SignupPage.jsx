@@ -42,20 +42,31 @@ const SignupPage = () => {
       let avatarUrl = null;
 
       // Step 2: Upload profile picture if provided
-      if (profilePic) {
-        const { data: imageData, error: uploadError } = await supabase.storage
-          .from("avatars")
-          .upload(`profile_${userId}`, profilePic, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+      const uploadAvatar = async (userId, file) => {
+        const filePath = `profile_${userId}.jpg`;
 
-        if (uploadError) throw uploadError;
-
-        avatarUrl = `${supabase.storage
+        const { data, error } = await supabase.storage
           .from("avatars")
-          .getPublicUrl(imageData.path)}`;
-      }
+          .upload(filePath, file, { upsert: true });
+
+        if (error) {
+          console.error("Upload failed:", error);
+          toast.error("Failed to upload profile picture.");
+          return null;
+        }
+
+        // Get public URL
+        const { data: publicUrlData } = supabase.storage
+          .from("avatars")
+          .getPublicUrl(filePath);
+
+        if (!publicUrlData.publicUrl) {
+          console.error("Failed to fetch public URL.");
+          return null;
+        }
+
+        return publicUrlData.publicUrl; // Return the uploaded image URL
+      };
 
       // Step 3: Insert profile data
       const { error: profileInsertError } = await supabase
@@ -175,7 +186,11 @@ const SignupPage = () => {
                 type="file"
                 accept="image/*"
                 className="hidden"
-                onChange={(e) => setProfilePic(e.target.files[0])}
+                onChange={(e) => {
+                  if (e.target.files.length > 0) {
+                    setProfilePic(e.target.files[0]); // Ensure a file is selected
+                  }
+                }}
               />
               {profilePic && (
                 <HiCheckCircle className="absolute right-3 top-3 text-darkblue w-6 h-6" />
