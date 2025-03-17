@@ -11,16 +11,14 @@ const LoginPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the user is already logged in and navigate to the profile page
     const checkSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
       if (session?.user) {
-        navigate("/profile"); // Redirect if logged in
+        navigate("/profile");
       }
     };
-
     checkSession();
   }, [navigate]);
 
@@ -40,8 +38,6 @@ const LoginPage = () => {
 
     try {
       setLoading(true);
-
-      // Step 1: Sign in the user
       const { data: authData, error: authError } =
         await supabase.auth.signInWithPassword({
           email,
@@ -50,42 +46,6 @@ const LoginPage = () => {
 
       if (authError) throw authError;
 
-      const user = authData.user;
-
-      // Step 2: Fetch the latest profile data after login
-      let { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user.id)
-        .single();
-
-      if (profileError && profileError.code !== "PGRST116") throw profileError;
-
-      // Step 3: If no profile exists, create one
-      if (!profile) {
-        const { error: insertError } = await supabase.from("profiles").insert([
-          {
-            id: user.id,
-            username: email.split("@")[0], // Default username
-            avatar_url: null,
-          },
-        ]);
-
-        if (insertError) throw insertError;
-
-        // Fetch the new profile again after inserting
-        const { data: newProfile, error: newProfileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-
-        if (newProfileError) throw newProfileError;
-
-        profile = newProfile;
-      }
-
-      // Store user and profile in state or context to trigger UI update
       setMessage("Login successful! Redirecting...");
       setTimeout(() => navigate("/profile/recipes"), 1500);
     } catch (error) {
@@ -96,10 +56,16 @@ const LoginPage = () => {
     }
   };
 
+  // Demo Login Handler
+  const handleDemoLogin = () => {
+    setFormData({ email: "benacer19000@gmail.com", password: "demo123" });
+    setTimeout(() => handleLogin(new Event("submit")), 500); // Simulate form submission
+  };
+
   return (
     <div className="min-h-screen flex justify-center items-center mt-10 bg-beige">
       <div className="w-full max-w-sm sm:max-w-md bg-ybrown p-6 sm:p-10 rounded-lg shadow-lg space-y-4 font-marko">
-        <h1 className="text-center text-3xl  font-semibold text-darkblue">
+        <h1 className="text-center text-3xl font-semibold text-darkblue">
           Login to Your Account
         </h1>
         <p className="text-center text-sm sm:text-base text-darkblue">
@@ -180,6 +146,15 @@ const LoginPage = () => {
             }`}
           >
             {loading ? "Logging in..." : "Login"}
+          </button>
+
+          {/* Demo Login Button */}
+          <button
+            type="button"
+            onClick={handleDemoLogin}
+            className="w-full py-3 mt-2 bg-darkblue text-orange rounded-md text-center transition hover:bg-gray-700"
+          >
+            Login as Demo User
           </button>
         </form>
       </div>
