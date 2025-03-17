@@ -39,7 +39,7 @@ export default function BlogCard({ blog }) {
           <img
             src={`https://hwkykpbyqjzegmzzzjvx.supabase.co/storage/v1/object/public/blog-images/${blog.image?.trim()}`}
             alt={blog.title || "Blog Image"}
-            className="w-full h-full object-cover rounded-tl-2xl rounded-br-3xl shadow-2xl"
+            className="w-full h-full object-cover rounded-tl-2xl rounded-br-3xl"
             onError={(e) => (e.target.style.display = "none")}
           />
         ) : (
