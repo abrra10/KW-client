@@ -32,9 +32,9 @@ export default function BlogCard({ blog }) {
   }, [blog.user_id]);
 
   return (
-    <div className="flex flex-col md:flex-row overflow-hidden px-14 mb-2">
+    <div className="flex flex-col md:flex-row overflow-hidden px-4 sm:px-8 md:px-14 mb-2">
       {/* Blog Image */}
-      <div className="w-full h-80 md:w-80 md:h-80 flex-shrink-0 flex items-center justify-center">
+      <div className="w-full h-48 sm:h-64 md:w-80 md:h-80 flex-shrink-0 flex items-center justify-center">
         {blog.image ? (
           <img
             src={`https://hwkykpbyqjzegmzzzjvx.supabase.co/storage/v1/object/public/blog-images/${blog.image?.trim()}`}
@@ -48,17 +48,19 @@ export default function BlogCard({ blog }) {
       </div>
 
       {/* Content */}
-      <div className="p-4 flex flex-col justify-between flex-1 min-h-[200px]">
+      <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 min-h-[150px] sm:min-h-[200px]">
         {/* Title & Author */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold capitalize w-2/3 truncate font-marko text-orange">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+          <h2 className="text-lg sm:text-xl font-semibold capitalize w-full sm:w-2/3 truncate font-marko text-orange">
             {blog.title}
           </h2>
-          <div className="text-sm text-orange font-semibold capitalize font-marko truncate w-20">
+          <div className="text-xs sm:text-sm text-orange font-semibold capitalize font-marko truncate w-full sm:w-20">
             {loading ? (
-              <span className="text-gray-500 text-sm">Loading...</span>
+              <span className="text-gray-500 text-xs sm:text-sm">
+                Loading...
+              </span>
             ) : error ? (
-              <span className="text-red-500 text-sm">{error}</span>
+              <span className="text-red-500 text-xs sm:text-sm">{error}</span>
             ) : (
               username
             )}
@@ -66,7 +68,7 @@ export default function BlogCard({ blog }) {
         </div>
 
         {/* Content */}
-        <blockquote className="mt-2 text-gray-700 text-sm overflow-hidden font-marko">
+        <blockquote className="mt-2 text-gray-700 text-xs sm:text-sm overflow-hidden font-marko line-clamp-3 sm:line-clamp-4">
           "{blog.content}"
         </blockquote>
 
