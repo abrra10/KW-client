@@ -74,7 +74,7 @@ export default function BlogCard({ blog }) {
         </div>
 
         {/* Content */}
-        <div className="mt-2 text-gray-700 text-xs sm:text-sm font-marko">
+        <div className="mt-8 text-gray-700 text-xs sm:text-sm font-marko">
           <div
             className={`${
               isExpanded ? "" : "line-clamp-4 sm:line-clamp-6"
