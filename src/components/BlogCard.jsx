@@ -5,6 +5,7 @@ export default function BlogCard({ blog }) {
   const [username, setUsername] = useState("Unknown User");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     if (!blog.user_id) return;
@@ -31,15 +32,20 @@ export default function BlogCard({ blog }) {
     fetchUsername();
   }, [blog.user_id]);
 
+  // Function to toggle content expansion
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
-    <div className="flex flex-col md:flex-row overflow-hidden px-4 sm:px-8 md:px-14 mb-2">
+    <div className="flex flex-col md:flex-row overflow-hidden px-4 sm:px-8 md:px-14 mb-4 bg-white rounded-xl shadow-md">
       {/* Blog Image */}
-      <div className="w-full h-48 sm:h-64 md:w-80 md:h-80 flex-shrink-0 flex items-center justify-center">
+      <div className="w-full h-48 sm:h-64 md:w-80 md:h-auto flex-shrink-0 flex items-center justify-center">
         {blog.image ? (
           <img
             src={`https://hwkykpbyqjzegmzzzjvx.supabase.co/storage/v1/object/public/blog-images/${blog.image?.trim()}`}
             alt={blog.title || "Blog Image"}
-            className="w-full h-full object-cover rounded-tl-2xl rounded-br-3xl"
+            className="w-full h-full object-cover rounded-tl-xl md:rounded-tl-xl md:rounded-bl-xl"
             onError={(e) => (e.target.style.display = "none")}
           />
         ) : (
@@ -48,9 +54,9 @@ export default function BlogCard({ blog }) {
       </div>
 
       {/* Content */}
-      <div className="p-3 sm:p-4 flex flex-col justify-between flex-1 min-h-[150px] sm:min-h-[200px]">
+      <div className="p-4 sm:p-5 flex flex-col flex-1">
         {/* Title & Author */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-0 mb-2">
           <h2 className="text-lg sm:text-xl font-semibold capitalize w-full sm:w-2/3 truncate font-marko text-orange">
             {blog.title}
           </h2>
@@ -68,12 +74,28 @@ export default function BlogCard({ blog }) {
         </div>
 
         {/* Content */}
-        <blockquote className="mt-2 text-gray-700 text-xs sm:text-sm overflow-hidden font-marko line-clamp-3 sm:line-clamp-4">
-          "{blog.content}"
-        </blockquote>
+        <div className="mt-2 text-gray-700 text-xs sm:text-sm font-marko">
+          <div
+            className={`${
+              isExpanded ? "" : "line-clamp-4 sm:line-clamp-6"
+            } whitespace-pre-line`}
+          >
+            {blog.content}
+          </div>
+
+          {/* Show more/less button if content is long */}
+          {blog.content && blog.content.length > 200 && (
+            <button
+              onClick={toggleExpand}
+              className="text-orange text-xs sm:text-sm font-semibold mt-2 hover:underline focus:outline-none"
+            >
+              {isExpanded ? "Show Less" : "Show More"}
+            </button>
+          )}
+        </div>
 
         {/* Date */}
-        <p className="text-xs text-gray-500 mt-2 font-oleo">
+        <p className="text-xs text-gray-500 mt-4 font-oleo">
           {blog.created_at
             ? new Date(blog.created_at).toLocaleDateString()
             : "Unknown Date"}
