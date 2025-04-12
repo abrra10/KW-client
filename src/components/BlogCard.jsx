@@ -38,7 +38,7 @@ export default function BlogCard({ blog }) {
   };
 
   return (
-    <div className="flex flex-col md:flex-row overflow-hidden px-4 sm:px-8 md:px-14 mb-4 bg-ybrown rounded-xl shadow-md">
+    <div className="flex flex-col md:flex-row overflow-hidden px-4 sm:px-8 md:px-14 mb-4 bg-beige rounded-xl shadow-md">
       {/* Blog Image */}
       <div className="w-full h-48 sm:h-64 md:w-80 md:h-auto flex-shrink-0 flex items-center justify-center">
         {blog.image ? (
